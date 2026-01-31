@@ -2,6 +2,11 @@
   <div class="lobby">
     <h2>Lobby</h2>
     <p>Välkommen, {{ name }}!</p>
+    <div v-if="lobbyId" class="lobby-id-box">
+      <span>Lobby-ID: <b>{{ lobbyId }}</b></span>
+      <button v-if="isHost" @click="copyLobbyId">Kopiera</button>
+      <span v-if="isHost" class="host-badge">(Host)</span>
+    </div>
     <h3>Spelare i lobbyn:</h3>
     <ul>
       <li v-for="player in players" :key="player">{{ player }}</li>
@@ -14,8 +19,40 @@ import { storeToRefs } from 'pinia'
 import { usePlayerStore } from '../store'
 
 const playerStore = usePlayerStore()
-const { name, players } = storeToRefs(playerStore)
+const { name, players, lobbyId, isHost } = storeToRefs(playerStore)
+
+function copyLobbyId() {
+  if (lobbyId.value) {
+    navigator.clipboard.writeText(lobbyId.value)
+    // valfritt: visa feedback
+  }
+}
 </script>
+.lobby-id-box {
+  background: #fff8ff;
+  border: 1.5px solid #b84cff33;
+  border-radius: 12px;
+  padding: 8px 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.05em;
+}
+.host-badge {
+  color: #b84cff;
+  font-weight: 700;
+  margin-left: 6px;
+}
+.lobby-id-box button {
+  background: #b84cff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 0.95em;
+  cursor: pointer;
+}
 
 <style scoped>
 .lobby {
